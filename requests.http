@@ -1,0 +1,35 @@
+PUT http://localhost:8080/ui-gateway/categories/1000/notes/
+Content-Type: application/json
+
+{
+  "id": 4,
+  "title": "Note 4",
+  "content": "Updated Some content"
+}
+
+###
+GET http://localhost:8080/ui-gateway/categories/1000/notes/
+Accept: application/json
+
+###
+
+DELETE http://localhost:8080/ui-gateway/categories/1000/notes/3/
+Accept: application/json
+
+###
+
+PUT http://localhost:8080/ui-gateway/categories/1000/notes/move/
+Content-Type: application/json
+
+{
+  "source": {
+    "parentId": "root",
+    "index": 0
+  },
+  "destination": {
+    "parentId": "1003",
+    "index": 3
+  }
+}
+
+###
