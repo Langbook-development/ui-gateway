@@ -1,5 +1,6 @@
 package lv.forfun.demo.api.notes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,4 +17,9 @@ import static lv.forfun.demo.Constants.ROOT_ID;
 public class PositionDto {
     private String parentId;
     private Long index;
+
+    @JsonIgnore
+    public Long getInternalParentId() {
+        return ROOT_ID.equals(parentId) ? null : Long.parseLong(parentId);
+    }
 }

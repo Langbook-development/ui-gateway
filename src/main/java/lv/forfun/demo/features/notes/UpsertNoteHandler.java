@@ -33,14 +33,14 @@ public class UpsertNoteHandler {
     }
 
     private UpsertNoteResponse createNote(NoteDto noteDTO, Long categoryId) {
-        Long sortIdx = repository.findMaxSortIdxByParentId(noteDTO.getParentId())
+        Long sortIdx = repository.findMaxSortIdxByParentId(noteDTO.getInternalParentId())
                 .map(idx -> idx + 1)
                 .orElse(0L);
         Note note = new Note()
                 .setTitle(noteDTO.getTitle())
                 .setContent(noteDTO.getContent())
                 .setCategoryId(categoryId)
-                .setParentId(noteDTO.getParentId())
+                .setParentId(noteDTO.getInternalParentId())
                 .setSortIdx(sortIdx);
         repository.save(note);
         return getUpsertNoteResponse(note);
@@ -48,7 +48,7 @@ public class UpsertNoteHandler {
 
     private UpsertNoteResponse getUpsertNoteResponse(Note note) {
         Long categoryId = note.getCategoryId();
-        NoteDto noteDto = service.getNoteDto(note.getIdAsString(), categoryId);
+        NoteDto noteDto = service.getNoteDto(note.getId(), categoryId);
         NoteDto parentDto = service.getNoteDto(note.getParentId(), categoryId);
         return new UpsertNoteResponse()
                 .setNote(noteDto)

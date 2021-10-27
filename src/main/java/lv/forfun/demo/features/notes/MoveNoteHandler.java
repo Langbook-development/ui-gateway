@@ -26,13 +26,13 @@ public class MoveNoteHandler {
 
         final Long noteId = findNoteIdIfExists(categoryId, from);
         ensureValidMovementDestination(to);
-        repository.shiftNotePositionsUp(categoryId, from.getParentId(), from.getIndex());
-        repository.shiftNotePositionsDown(categoryId, to.getParentId(), to.getIndex());
-        repository.updateParentIdAndSortIdx(noteId, to.getParentId(), to.getIndex());
+        repository.shiftNotePositionsUp(categoryId, from.getInternalParentId(), from.getIndex());
+        repository.shiftNotePositionsDown(categoryId, to.getInternalParentId(), to.getIndex());
+        repository.updateParentIdAndSortIdx(noteId, to.getInternalParentId(), to.getIndex());
     }
 
     private void ensureValidMovementDestination(PositionDto to) {
-        long maxSortIdx = repository.findMaxSortIdxByParentId(to.getParentId()).orElse(0L) + 1;
+        long maxSortIdx = repository.findMaxSortIdxByParentId(to.getInternalParentId()).orElse(0L) + 1;
         if (to.getIndex() > maxSortIdx) {
             throw new IllegalArgumentException("Could not move note. SortIdx exceeds max available." +
                     " sortIdx:["+ to.getIndex() +"], maxAvailable:["+ maxSortIdx +"], parentId:["+ to.getParentId() +"]");
@@ -40,7 +40,7 @@ public class MoveNoteHandler {
     }
 
     private Long findNoteIdIfExists(Long categoryId, PositionDto from) {
-        final String parentId = from.getParentId();
+        final Long parentId = from.getInternalParentId();
         final Long sortIdx = from.getIndex();
         return repository.findNoteId(categoryId, parentId, sortIdx)
                 .orElseThrow(() -> new IllegalArgumentException(

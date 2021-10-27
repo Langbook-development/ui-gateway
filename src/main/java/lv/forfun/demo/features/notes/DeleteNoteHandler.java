@@ -17,8 +17,6 @@ import java.util.Objects;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
-import static lv.forfun.demo.Constants.ROOT_ID;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -55,7 +53,7 @@ public class DeleteNoteHandler {
         treeIds.add(id);
         while (!idsToFetch.isEmpty()) {
             Long idToFetch = idsToFetch.pop();
-            List<Long> childIds = service.findChildPageIds(idToFetch.toString(), all);
+            List<Long> childIds = service.findChildPageIds(idToFetch, all);
             treeIds.addAll(childIds);
             childIds.forEach(idsToFetch::push);
         }

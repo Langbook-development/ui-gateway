@@ -17,7 +17,7 @@ public interface NoteRepository extends CrudRepository<Note, Long> {
     @Query("DELETE FROM Note n WHERE n.id IN :ids")
     void deleteNotesWithIds(@Param("ids") List<Long> ids);
 
-    List<Note> findAllByParentIdAndCategoryId(String parentId, Long categoryId);
+    List<Note> findAllByParentIdAndCategoryId(Long parentId, Long categoryId);
 
     List<Note> findAllByCategoryId(Long categoryId);
 
@@ -28,7 +28,7 @@ public interface NoteRepository extends CrudRepository<Note, Long> {
     )
     @Modifying
     void shiftNotePositionsDown(@Param("categoryId") Long categoryId,
-                                @Param("parentId") String parentId,
+                                @Param("parentId") Long parentId,
                                 @Param("sortIdxFrom") Long sortIdxFrom);
 
     @Query("UPDATE Note n SET n.sortIdx = n.sortIdx - 1 " +
@@ -38,13 +38,13 @@ public interface NoteRepository extends CrudRepository<Note, Long> {
     )
     @Modifying
     void shiftNotePositionsUp(@Param("categoryId") Long categoryId,
-                              @Param("parentId") String parentId,
+                              @Param("parentId") Long parentId,
                               @Param("sortIdxFrom") Long sortIdxFrom);
 
     @Query("UPDATE Note n SET n.sortIdx = :sortIdx, n.parentId = :parentId WHERE n.id = :noteId")
     @Modifying
     void updateParentIdAndSortIdx(@Param("noteId") Long noteId,
-                                  @Param("parentId") String parentId,
+                                  @Param("parentId") Long parentId,
                                   @Param("sortIdx") Long sortIdx);
 
     @Query("SELECT n.id FROM Note n           " +
@@ -53,9 +53,9 @@ public interface NoteRepository extends CrudRepository<Note, Long> {
            "   AND n.categoryId = :categoryId "
     )
     Optional<Long> findNoteId(@Param("categoryId") Long categoryId,
-                              @Param("parentId") String parentId,
+                              @Param("parentId") Long parentId,
                               @Param("sortIdx") Long sortIdx);
 
     @Query("SELECT MAX(n.sortIdx) FROM Note n WHERE n.parentId = :parentId ")
-    Optional<Long> findMaxSortIdxByParentId(@Param("parentId") String parentId);
+    Optional<Long> findMaxSortIdxByParentId(@Param("parentId") Long parentId);
 }

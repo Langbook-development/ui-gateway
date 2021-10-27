@@ -8,8 +8,6 @@ import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 
-import static lv.forfun.demo.Constants.ROOT_ID;
-
 @With
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,7 +22,7 @@ public class Note {
     @Column String title;
     @Column String content;
 
-    @Column String parentId;
+    @Column Long parentId;
     @Column Long sortIdx;
 
     @Column Long categoryId;

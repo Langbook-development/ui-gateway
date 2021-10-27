@@ -2,15 +2,15 @@ package lv.forfun.demo.features.notes;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lv.forfun.demo.api.notes.NoteDto;
 import lv.forfun.demo.api.notes.NotesResponse;
 import lv.forfun.demo.domain.Note;
-import lv.forfun.demo.api.notes.NoteDto;
 import lv.forfun.demo.domain.NoteRepository;
 import lv.forfun.demo.features.Mapper;
 import lv.forfun.demo.features.notes.services.NoteService;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -36,6 +36,6 @@ public class SelectNoteHandler {
     }
 
     public Function<NoteDto, NoteDto> enrichByChildIds(List<Note> all) {
-        return it -> it.withChildren(service.findChildPageIdsAsString(it.getId(), all));
+        return it -> it.withChildren(service.findChildPageIdsAsString(it.getIdAsLong(), all));
     }
 }

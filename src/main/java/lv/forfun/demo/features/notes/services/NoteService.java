@@ -10,9 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static lv.forfun.demo.Constants.ROOT_ID;
 
 @Slf4j
 @Service
@@ -24,48 +23,48 @@ public class NoteService {
 
     public NoteDto getRootNoteDto(Long categoryId) {
         return NoteDto.root()
-                .withChildren(findChildPageIdsAsString(ROOT_ID, categoryId));
+                .withChildren(findChildPageIdsAsString(null, categoryId));
     }
 
     public NoteDto getRootNoteDto(List<Note> all) {
         return NoteDto.root()
-                .setChildren(findChildPageIdsAsString(ROOT_ID, all));
+                .setChildren(findChildPageIdsAsString(null, all));
     }
 
-    public NoteDto getNoteDto(String noteId, Long categoryId) {
-        return ROOT_ID.equals(noteId)
+    public NoteDto getNoteDto(Long noteId, Long categoryId) {
+        return noteId == null
                 ? getRootNoteDto(categoryId)
                 : getLeafNoteDto(noteId);
     }
 
-    private NoteDto getLeafNoteDto(String noteId) {
-        Note note = repository.findById(Long.parseLong(noteId)).orElseThrow();
+    private NoteDto getLeafNoteDto(Long noteId) {
+        Note note = repository.findById(noteId).orElseThrow();
         List<String> childIds = findChildPageIdsAsString(noteId, note.getCategoryId());
         return mapper.toNoteDTO(note).withChildren(childIds);
     }
 
-    public List<String> findChildPageIdsAsString(String noteId, Long categoryId) {
+    public List<String> findChildPageIdsAsString(Long noteId, Long categoryId) {
         return findChildPageIds(noteId, categoryId)
                 .stream()
                 .map(Object::toString)
                 .collect(Collectors.toList());
     }
 
-    public List<String> findChildPageIdsAsString(String noteId, List<Note> all) {
+    public List<String> findChildPageIdsAsString(Long noteId, List<Note> all) {
         return findChildPageIds(noteId, all)
                 .stream()
                 .map(Object::toString)
                 .collect(Collectors.toList());
     }
 
-    public List<Long> findChildPageIds(String noteId, Long categoryId) {
+    public List<Long> findChildPageIds(Long noteId, Long categoryId) {
         List<Note> all = repository.findAllByParentIdAndCategoryId(noteId, categoryId);
         return findChildPageIds(noteId, all);
     }
 
-    public List<Long> findChildPageIds(String noteId, List<Note> all) {
+    public List<Long> findChildPageIds(Long noteId, List<Note> all) {
         return all.stream()
-                .filter(it -> noteId.equals(it.getParentId()))
+                .filter(it -> Objects.equals(noteId, it.getParentId()))
                 .sorted(Comparator.comparing(Note::getSortIdx))
                 .map(Note::getId)
                 .collect(Collectors.toList());

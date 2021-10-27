@@ -1,7 +1,10 @@
 package lv.forfun.demo.api.notes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.With;
 import lombok.experimental.Accessors;
 
 import java.util.List;
@@ -24,6 +27,11 @@ public class NoteDto {
     @JsonIgnore
     public Long getIdAsLong() {
         return Long.parseLong(id);
+    }
+
+    @JsonIgnore
+    public Long getInternalParentId() {
+        return ROOT_ID.equals(parentId) ? null : Long.parseLong(parentId);
     }
 
     public static NoteDto root() {
