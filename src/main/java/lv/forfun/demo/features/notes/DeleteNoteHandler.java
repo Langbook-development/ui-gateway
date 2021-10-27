@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import static lv.forfun.demo.Constants.ROOT_ID;
 
@@ -30,34 +31,40 @@ public class DeleteNoteHandler {
 
     @Transactional
     public DeleteNoteResponse execute(Long id, Long categoryId) {
-        List<Note> all = repository.findAllByParentIdAndCategoryId(ROOT_ID, categoryId);
+        List<Note> all = repository.findAllByCategoryId(categoryId);
         Note note = findById(id, all);
-        List<String> idsToDelete = getTreeIds(id, all);
+        List<Long> idsToDelete = getTreeIds(id, all);
         repository.deleteNotesWithIds(idsToDelete);
         NoteDto noteDto = mapper.toNoteDTO(note);
         return new DeleteNoteResponse()
-                .setDeletedIds(idsToDelete)
+                .setDeletedIds(toString(idsToDelete))
                 .setNote(noteDto);
     }
 
-    public Note findById(Long id, List<Note> all) {
+    private Note findById(Long id, List<Note> all) {
         return all.stream()
                 .filter(it -> Objects.equals(id, it.getId()))
                 .findFirst()
                 .orElseThrow();
     }
 
-    public List<String> getTreeIds(Long id, List<Note> all) {
-        List<String> treeIds = new ArrayList<>();
-        Stack<String> idsToFetch = new Stack<>();
-        idsToFetch.add(id.toString());
-        treeIds.add(id.toString());
+    private List<Long> getTreeIds(Long id, List<Note> all) {
+        List<Long> treeIds = new ArrayList<>();
+        Stack<Long> idsToFetch = new Stack<>();
+        idsToFetch.add(id);
+        treeIds.add(id);
         while (!idsToFetch.isEmpty()) {
-            String idToFetch = idsToFetch.pop();
-            List<String> childIds = service.findChildPageIds(idToFetch, all);
+            Long idToFetch = idsToFetch.pop();
+            List<Long> childIds = service.findChildPageIds(idToFetch.toString(), all);
             treeIds.addAll(childIds);
             childIds.forEach(idsToFetch::push);
         }
         return treeIds;
+    }
+
+    private List<String> toString(List<Long> ids) {
+        return ids.stream()
+                .map(Objects::toString)
+                .collect(Collectors.toList());
     }
 }

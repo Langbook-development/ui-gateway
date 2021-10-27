@@ -24,12 +24,12 @@ public class NoteService {
 
     public NoteDto getRootNoteDto(Long categoryId) {
         return NoteDto.root()
-                .withChildren(findChildPageIds(ROOT_ID, categoryId));
+                .withChildren(findChildPageIdsAsString(ROOT_ID, categoryId));
     }
 
     public NoteDto getRootNoteDto(List<Note> all) {
         return NoteDto.root()
-                .setChildren(findChildPageIds(ROOT_ID, all));
+                .setChildren(findChildPageIdsAsString(ROOT_ID, all));
     }
 
     public NoteDto getNoteDto(String noteId, Long categoryId) {
@@ -40,21 +40,34 @@ public class NoteService {
 
     private NoteDto getLeafNoteDto(String noteId) {
         Note note = repository.findById(Long.parseLong(noteId)).orElseThrow();
-        List<String> childIds = findChildPageIds(noteId, note.getCategoryId());
+        List<String> childIds = findChildPageIdsAsString(noteId, note.getCategoryId());
         return mapper.toNoteDTO(note).withChildren(childIds);
     }
 
-    public List<String> findChildPageIds(String noteId, Long categoryId) {
+    public List<String> findChildPageIdsAsString(String noteId, Long categoryId) {
+        return findChildPageIds(noteId, categoryId)
+                .stream()
+                .map(Object::toString)
+                .collect(Collectors.toList());
+    }
+
+    public List<String> findChildPageIdsAsString(String noteId, List<Note> all) {
+        return findChildPageIds(noteId, all)
+                .stream()
+                .map(Object::toString)
+                .collect(Collectors.toList());
+    }
+
+    public List<Long> findChildPageIds(String noteId, Long categoryId) {
         List<Note> all = repository.findAllByParentIdAndCategoryId(noteId, categoryId);
         return findChildPageIds(noteId, all);
     }
 
-    public List<String> findChildPageIds(String noteId, List<Note> all) {
+    public List<Long> findChildPageIds(String noteId, List<Note> all) {
         return all.stream()
                 .filter(it -> noteId.equals(it.getParentId()))
                 .sorted(Comparator.comparing(Note::getSortIdx))
                 .map(Note::getId)
-                .map(Object::toString)
                 .collect(Collectors.toList());
     }
 }

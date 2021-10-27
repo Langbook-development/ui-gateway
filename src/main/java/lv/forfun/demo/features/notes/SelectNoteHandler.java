@@ -14,8 +14,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static lv.forfun.demo.Constants.ROOT_ID;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -38,6 +36,6 @@ public class SelectNoteHandler {
     }
 
     public Function<NoteDto, NoteDto> enrichByChildIds(List<Note> all) {
-        return it -> it.withChildren(service.findChildPageIds(it.getId(), all));
+        return it -> it.withChildren(service.findChildPageIdsAsString(it.getId(), all));
     }
 }

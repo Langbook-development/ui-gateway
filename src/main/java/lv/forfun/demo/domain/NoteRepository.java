@@ -15,7 +15,7 @@ public interface NoteRepository extends CrudRepository<Note, Long> {
 
     @Modifying
     @Query("DELETE FROM Note n WHERE n.id IN :ids")
-    void deleteNotesWithIds(@Param("ids") List<String> ids);
+    void deleteNotesWithIds(@Param("ids") List<Long> ids);
 
     List<Note> findAllByParentIdAndCategoryId(String parentId, Long categoryId);
 
