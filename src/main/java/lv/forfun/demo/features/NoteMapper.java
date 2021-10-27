@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static java.lang.Long.parseLong;
 import static lv.forfun.demo.Constants.ROOT_ID;
 
 @Service
@@ -26,7 +27,7 @@ public class NoteMapper {
     }
 
     public NoteDto enrichByChildIds(NoteDto dto, List<Note> all) {
-        return dto.withChildren(toString(service.findChildPageIds(dto.getIdAsLong(), all)));
+        return dto.withChildren(toString(service.findChildPageIds(parseLong(dto.getId()), all)));
     }
 
     public NoteDto getRootNoteDto(List<Note> all) {

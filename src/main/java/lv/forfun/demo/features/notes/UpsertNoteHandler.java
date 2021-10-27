@@ -10,6 +10,8 @@ import lv.forfun.demo.features.NoteMapper;
 import lv.forfun.demo.features.notes.services.NoteService;
 import org.springframework.stereotype.Service;
 
+import static java.lang.Long.parseLong;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -27,7 +29,7 @@ public class UpsertNoteHandler {
     }
 
     private UpsertNoteResponse updateNote(NoteDto noteDTO) {
-        Note note = service.findById(noteDTO.getIdAsLong());
+        Note note = service.findById(parseLong(noteDTO.getId()));
         note.setTitle(noteDTO.getTitle())
                 .setContent(noteDTO.getContent());
         repository.save(note);

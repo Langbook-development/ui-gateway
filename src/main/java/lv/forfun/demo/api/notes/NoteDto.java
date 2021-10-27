@@ -25,11 +25,6 @@ public class NoteDto {
     List<String> children;
 
     @JsonIgnore
-    public Long getIdAsLong() {
-        return Long.parseLong(id);
-    }
-
-    @JsonIgnore
     public Long getInternalParentId() {
         return ROOT_ID.equals(parentId) ? null : Long.parseLong(parentId);
     }
