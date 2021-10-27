@@ -21,20 +21,22 @@ public interface NoteRepository extends CrudRepository<Note, Long> {
 
     List<Note> findAllByCategoryId(Long categoryId);
 
-    @Query("UPDATE Note n SET n.sortIdx = n.sortIdx + 1 " +
-            "WHERE n.parentId = :parentId               " +
-            "  AND n.categoryId =:categoryId            " +
-            "  AND n.sortIdx >= :sortIdxFrom            "
+    @Query("UPDATE Note n SET n.sortIdx = n.sortIdx + 1        " +
+            "WHERE n.categoryId =:categoryId                   " +
+            "  AND n.sortIdx >= :sortIdxFrom                   " +
+            "  AND (n.parentId = :parentId OR                  " +
+            "      (n.parentId IS NULL AND :parentId IS NULL)) "
     )
     @Modifying
     void shiftNotePositionsDown(@Param("categoryId") Long categoryId,
                                 @Param("parentId") Long parentId,
                                 @Param("sortIdxFrom") Long sortIdxFrom);
 
-    @Query("UPDATE Note n SET n.sortIdx = n.sortIdx - 1 " +
-            "WHERE n.parentId = :parentId              " +
-            "  AND n.categoryId =:categoryId           " +
-            "  AND n.sortIdx >= :sortIdxFrom           "
+    @Query("UPDATE Note n SET n.sortIdx = n.sortIdx - 1        " +
+            "WHERE n.categoryId =:categoryId                   " +
+            "  AND n.sortIdx >= :sortIdxFrom                   " +
+            "  AND (n.parentId = :parentId OR                  " +
+            "      (n.parentId IS NULL AND :parentId IS NULL)) "
     )
     @Modifying
     void shiftNotePositionsUp(@Param("categoryId") Long categoryId,
@@ -47,15 +49,19 @@ public interface NoteRepository extends CrudRepository<Note, Long> {
                                   @Param("parentId") Long parentId,
                                   @Param("sortIdx") Long sortIdx);
 
-    @Query("SELECT n.id FROM Note n           " +
-           " WHERE n.sortIdx = :sortIdx       " +
-           "   AND n.parentId = :parentId     " +
-           "   AND n.categoryId = :categoryId "
+    @Query("SELECT n.id FROM Note n                            " +
+           " WHERE n.sortIdx = :sortIdx                        " +
+           "   AND n.categoryId = :categoryId                  " +
+           "   AND (n.parentId = :parentId OR                  " +
+           "       (n.parentId IS NULL AND :parentId IS NULL)) "
     )
     Optional<Long> findNoteId(@Param("categoryId") Long categoryId,
                               @Param("parentId") Long parentId,
                               @Param("sortIdx") Long sortIdx);
 
-    @Query("SELECT MAX(n.sortIdx) FROM Note n WHERE n.parentId = :parentId ")
+    @Query("SELECT MAX(n.sortIdx) FROM Note n                  " +
+           " WHERE (n.parentId = :parentId OR                  " +
+           "       (n.parentId IS NULL AND :parentId IS NULL)) "
+    )
     Optional<Long> findMaxSortIdxByParentId(@Param("parentId") Long parentId);
 }

@@ -6,6 +6,7 @@ import lv.forfun.demo.api.notes.NoteDto;
 import lv.forfun.demo.api.notes.UpsertNoteResponse;
 import lv.forfun.demo.domain.Note;
 import lv.forfun.demo.domain.NoteRepository;
+import lv.forfun.demo.features.NoteMapper;
 import lv.forfun.demo.features.notes.services.NoteService;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class UpsertNoteHandler {
 
     private final NoteService service;
+    private final NoteMapper mapper;
     private final NoteRepository repository;
 
     public UpsertNoteResponse execute(Long categoryId, NoteDto noteDTO) {
@@ -25,7 +27,7 @@ public class UpsertNoteHandler {
     }
 
     private UpsertNoteResponse updateNote(NoteDto noteDTO) {
-        Note note = repository.findById(noteDTO.getIdAsLong()).orElseThrow();
+        Note note = service.findById(noteDTO.getIdAsLong());
         note.setTitle(noteDTO.getTitle())
                 .setContent(noteDTO.getContent());
         repository.save(note);
@@ -48,8 +50,8 @@ public class UpsertNoteHandler {
 
     private UpsertNoteResponse getUpsertNoteResponse(Note note) {
         Long categoryId = note.getCategoryId();
-        NoteDto noteDto = service.getNoteDto(note.getId(), categoryId);
-        NoteDto parentDto = service.getNoteDto(note.getParentId(), categoryId);
+        NoteDto noteDto = mapper.getNoteDto(note.getId(), categoryId);
+        NoteDto parentDto = mapper.getNoteDto(note.getParentId(), categoryId);
         return new UpsertNoteResponse()
                 .setNote(noteDto)
                 .setParentNote(parentDto);

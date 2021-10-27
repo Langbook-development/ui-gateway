@@ -6,8 +6,7 @@ import lv.forfun.demo.api.notes.NoteDto;
 import lv.forfun.demo.api.notes.NotesResponse;
 import lv.forfun.demo.domain.Note;
 import lv.forfun.demo.domain.NoteRepository;
-import lv.forfun.demo.features.Mapper;
-import lv.forfun.demo.features.notes.services.NoteService;
+import lv.forfun.demo.features.NoteMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,8 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SelectNoteHandler {
 
-    private final NoteService service;
-    private final Mapper mapper;
+    private final NoteMapper mapper;
     private final NoteRepository repository;
 
     public NotesResponse execute(Long categoryId) {
@@ -30,12 +28,12 @@ public class SelectNoteHandler {
                 .map(mapper::toNoteDTO)
                 .map(enrichByChildIds(all))
                 .collect(Collectors.toList());
-        noteDTOs.add(service.getRootNoteDto(all));
+        noteDTOs.add(mapper.getRootNoteDto(all));
         return new NotesResponse()
                 .setNotes(noteDTOs);
     }
 
-    public Function<NoteDto, NoteDto> enrichByChildIds(List<Note> all) {
-        return it -> it.withChildren(service.findChildPageIdsAsString(it.getIdAsLong(), all));
+    private Function<NoteDto, NoteDto> enrichByChildIds(List<Note> all) {
+        return it -> mapper.enrichByChildIds(it, all);
     }
 }

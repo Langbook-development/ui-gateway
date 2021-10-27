@@ -6,7 +6,7 @@ import lv.forfun.demo.api.notes.DeleteNoteResponse;
 import lv.forfun.demo.api.notes.NoteDto;
 import lv.forfun.demo.domain.Note;
 import lv.forfun.demo.domain.NoteRepository;
-import lv.forfun.demo.features.Mapper;
+import lv.forfun.demo.features.NoteMapper;
 import lv.forfun.demo.features.notes.services.NoteService;
 import org.springframework.stereotype.Service;
 
@@ -23,9 +23,8 @@ import java.util.stream.Collectors;
 public class DeleteNoteHandler {
 
     private final NoteService service;
-
     private final NoteRepository repository;
-    private final Mapper mapper;
+    private final NoteMapper mapper;
 
     @Transactional
     public DeleteNoteResponse execute(Long id, Long categoryId) {
