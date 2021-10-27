@@ -35,7 +35,7 @@ public class UpsertNoteHandler {
     }
 
     private UpsertNoteResponse createNote(NoteDto noteDTO, Long categoryId) {
-        Long sortIdx = repository.findMaxSortIdxByParentId(noteDTO.getInternalParentId())
+        Long sortIdx = repository.findMaxSortIdxByParentId(categoryId, noteDTO.getInternalParentId())
                 .map(idx -> idx + 1)
                 .orElse(0L);
         Note note = new Note()

@@ -11,8 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface NoteRepository extends CrudRepository<Note, Long> {
-    List<Note> findAll();
-
     @Modifying
     @Query("DELETE FROM Note n WHERE n.id IN :ids")
     void deleteNotesWithIds(@Param("ids") List<Long> ids);
@@ -60,8 +58,10 @@ public interface NoteRepository extends CrudRepository<Note, Long> {
                               @Param("sortIdx") Long sortIdx);
 
     @Query("SELECT MAX(n.sortIdx) FROM Note n                  " +
-           " WHERE (n.parentId = :parentId OR                  " +
-           "       (n.parentId IS NULL AND :parentId IS NULL)) "
+           " WHERE n.categoryId = :categoryId                  " +
+            "  AND (n.parentId = :parentId OR                  " +
+            "      (n.parentId IS NULL AND :parentId IS NULL)) "
     )
-    Optional<Long> findMaxSortIdxByParentId(@Param("parentId") Long parentId);
+    Optional<Long> findMaxSortIdxByParentId(@Param("categoryId") Long categoryId,
+                                            @Param("parentId") Long parentId);
 }
