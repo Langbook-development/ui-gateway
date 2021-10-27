@@ -19,6 +19,8 @@ public interface NoteRepository extends CrudRepository<Note, Long> {
 
     List<Note> findAllByParentIdAndCategoryId(String parentId, Long categoryId);
 
+    List<Note> findAllByCategoryId(Long categoryId);
+
     @Query("UPDATE Note n SET n.sortIdx = n.sortIdx + 1 " +
             "WHERE n.parentId = :parentId               " +
             "  AND n.categoryId =:categoryId            " +

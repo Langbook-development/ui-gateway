@@ -49,7 +49,7 @@ public class Controller {
 
     @PutMapping("/categories/{categoryId}/notes/move")
     MoveNoteRequest moveNote(@PathVariable("categoryId") Long categoryId,
-                               @RequestBody MoveNoteRequest moveNoteRequest) {
+                             @RequestBody MoveNoteRequest moveNoteRequest) {
         moveNoteHandler.execute(categoryId, moveNoteRequest);
         return moveNoteRequest;
     }

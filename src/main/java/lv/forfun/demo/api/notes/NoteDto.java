@@ -1,5 +1,6 @@
 package lv.forfun.demo.api.notes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -20,6 +21,7 @@ public class NoteDto {
     String parentId;
     List<String> children;
 
+    @JsonIgnore
     public Long getIdAsLong() {
         return Long.parseLong(id);
     }

@@ -27,7 +27,7 @@ public class SelectNoteHandler {
 
     public NotesResponse execute(Long categoryId) {
         log.info("Requesting notes. categoryId:[{}]", categoryId);
-        List<Note> all = repository.findAllByParentIdAndCategoryId(ROOT_ID, categoryId);
+        List<Note> all = repository.findAllByCategoryId(categoryId);
         List<NoteDto> noteDTOs = all.stream()
                 .map(mapper::toNoteDTO)
                 .map(enrichByChildIds(all))
